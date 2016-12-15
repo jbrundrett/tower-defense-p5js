@@ -22,11 +22,70 @@ function Grid() {
 	}
 
 	this.get = function(row,col) {
-		return this.cells[col * rows + row];
+		return this.cells[row * cols + col];
 	}
 
-	this.getPathDir = function(row,col) {
-		var east = this.get(row, col + 1);
+	// RETURN 1 --> indicates valid tower
+	// RETURN 0 --> indicates invalid in bounds
+	// RETURN -1 --> indicates invalid out of bounds
+	this.validTowerPlacement = function(towersize) {
+		var mx = mouseX - buffer;
+		var my = mouseY - buffer;
+
+		var mouseVector = new p5.Vector(mx,my);
+
+		var i = Math.floor (mx / w);
+		var j = Math.floor (my / w);
+
+		var ret = 1;
+
+		// check tower distances
+		for (var k = tower.length - 1; k >= 0; k--) {
+			if (mouseVector.dist(tower[k].cur) < tower[k].r * 2) {
+				ret = 0;
+			}
+		}
+		// for (var k = 0; k < tower.length; i++) {
+		// 	if (mouseVector.dist(tower[k].cur) < tower[k].r * 2) {
+		// 		ret = 0;
+		// 	}
+		// }
+
+		// check for corners out of bounds or path
+		i = Math.floor ((mx - towersize) / w);
+		j = Math.floor ((my - towersize) / w);
+		if (i >= 0 && i < cols && j >= 0 && j < rows) {
+			if (this.get(i,j).path) ret = 0;
+		} else {
+			return -1;
+		}
+		i = Math.floor ((mx + towersize) / w);
+		j = Math.floor ((my - towersize) / w);
+		if (i >= 0 && i < cols && j >= 0 && j < rows) {
+			if (this.get(i,j).path) ret = 0;
+		} else {
+			return -1;
+		}
+		i = Math.floor ((mx - towersize) / w);
+		j = Math.floor ((my + towersize) / w);
+		if (i >= 0 && i < cols && j >= 0 && j < rows) {
+			if (this.get(i,j).path) ret = 0;
+		} else {
+			return -1;
+		}
+		i = Math.floor ((mx + towersize) / w);
+		j = Math.floor ((my + towersize) / w);
+		if (i >= 0 && i < cols && j >= 0 && j < rows) {
+			if (this.get(i,j).path) ret = 0;
+		} else {
+			return -1;
+		}
+
+		return ret;
+	}
+
+	this.getPathDir = function(i,j) {
+		var east = this.get(i + 1, j);
 		// var south = this.get(row + 1, col);
 
 		var ret = {

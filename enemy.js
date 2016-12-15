@@ -18,8 +18,8 @@ function Enemy(health) {
 		this.x += this.xvel;
 		this.y += this.yvel;
 
-		this.row = Math.floor((this.y - w/2) / w);
-		this.col = Math.floor((this.x - w/2) / w);
+		this.row = Math.floor((this.x - w/2) / w);
+		this.col = Math.floor((this.y - w/2) / w);
 
 		var newSpeed = grid.getPathDir(this.row,this.col);
 
